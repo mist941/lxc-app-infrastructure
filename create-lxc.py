@@ -94,8 +94,6 @@ def get_next_vm_id(proxmox: ProxmoxAPI) -> int:
 def create_container(proxmox: ProxmoxAPI, container_settings: dict) -> None:
     vmid = get_next_vm_id(proxmox)
 
-    put_container_settings_in_file(container_settings["name"], vmid)
-
     proxmox.nodes(PROXMOX_NODE).lxc.post(
         vmid=vmid,
         hostname=container_settings["name"],
@@ -106,6 +104,8 @@ def create_container(proxmox: ProxmoxAPI, container_settings: dict) -> None:
         net0="name=eth0,bridge=vmbr0,ip=dhcp",
         rootfs=container_settings["rootfs"],
     )
+
+    put_container_settings_in_file(container_settings["name"], vmid)
 
 
 def main() -> None:
