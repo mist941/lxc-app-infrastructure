@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 PROXMOX_HOST = os.getenv("PROXMOX_HOST")
-PROXMOX_USER = os.getenv("PROXMOX_USER")
+PROXMOX_USER = os.getenv("PROXMOX_USER") + "@pam"
 PROXMOX_PASSWORD = os.getenv("PROXMOX_PASSWORD")
 PROXMOX_NODE = os.getenv("PROXMOX_NODE")
 
