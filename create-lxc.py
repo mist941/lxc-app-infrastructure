@@ -114,7 +114,7 @@ def create_container(
         start=1,
         features="nesting=1",
         unprivileged=1,
-        ssh_public_keys=ssh_pub_key,
+        **{"ssh-public-keys": ssh_pub_key},
     )
 
     put_container_settings_in_file(container_settings["name"], vmid)
