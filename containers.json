@@ -1,1 +1,10 @@
-{}
+{
+    "lxc-proxy": 102,
+    "lxc-app": 103,
+    "lxc-db": 104,
+    "lxc-monitoring": 105,
+    "lxc-forgejo": 106,
+    "lxc-drone-server": 107,
+    "lxc-drone-runner": 108,
+    "lxc-backup": 109
+}
