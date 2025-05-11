@@ -20,8 +20,16 @@ def main() -> None:
     sftp.put(LOCAL_SCRIPT_PATH, REMOTE_SCRIPT_PATH)
     sftp.close()
 
-    ssh.exec_command(f"chmod +x {REMOTE_SCRIPT_PATH}")
-    ssh.exec_command(f"{REMOTE_SCRIPT_PATH}")
+    commands = [
+        f"chmod +x {REMOTE_SCRIPT_PATH}",
+        f"{REMOTE_SCRIPT_PATH}",
+    ]
+
+    for command in commands:
+        stdin, stdout, stderr = ssh.exec_command(command)
+        print(f'Command "{command}" output:')
+        print(stdout.read().decode())
+        print(stderr.read().decode())
 
     ssh.close()
 
