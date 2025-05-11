@@ -10,6 +10,7 @@ PROXMOX_USER = os.getenv("PROXMOX_USER") + "@pam"
 PROXMOX_PASSWORD = os.getenv("PROXMOX_PASSWORD")
 PROXMOX_NODE = os.getenv("PROXMOX_NODE")
 SSH_PUB_KEY_PATH = os.getenv("SSH_PUB_KEY_PATH")
+PROXMOX_CONTAINER_PASSWORD = os.getenv("PROXMOX_CONTAINER_PASSWORD")
 
 list_of_container_settings = [
     {
@@ -114,6 +115,7 @@ def create_container(
         start=1,
         features="nesting=1",
         unprivileged=1,
+        password=PROXMOX_CONTAINER_PASSWORD,
         **{"ssh-public-keys": ssh_pub_key},
     )
 
