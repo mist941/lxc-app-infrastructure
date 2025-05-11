@@ -26,7 +26,7 @@ def main() -> None:
     ]
 
     for command in commands:
-        stdin, stdout, stderr = ssh.exec_command(command)
+        _, stdout, stderr = ssh.exec_command(command)
         print(f'Command "{command}" output:')
         print(stdout.read().decode())
         print(stderr.read().decode())
