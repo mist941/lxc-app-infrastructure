@@ -9,6 +9,7 @@ PROXMOX_HOST = os.getenv("PROXMOX_HOST")
 PROXMOX_USER = os.getenv("PROXMOX_USER") + "@pam"
 PROXMOX_PASSWORD = os.getenv("PROXMOX_PASSWORD")
 PROXMOX_NODE = os.getenv("PROXMOX_NODE")
+SSH_PUB_KEY_PATH = os.getenv("SSH_PUB_KEY_PATH")
 
 list_of_container_settings = [
     {
@@ -82,6 +83,11 @@ def put_container_settings_in_file(name: str, id: int) -> None:
         json.dump(data, file, indent=4, ensure_ascii=False)
 
 
+def get_ssh_pub_key(path: str) -> str:
+    with open(path, "r", encoding="utf-8") as file:
+        return file.read()
+
+
 def get_next_vm_id(proxmox: ProxmoxAPI) -> int:
     qemu_vms = proxmox.nodes(PROXMOX_NODE).qemu.get()
     lxc_cts = proxmox.nodes(PROXMOX_NODE).lxc.get()
@@ -91,7 +97,9 @@ def get_next_vm_id(proxmox: ProxmoxAPI) -> int:
     return max(all_ids) + 1 if all_ids else 100
 
 
-def create_container(proxmox: ProxmoxAPI, container_settings: dict) -> None:
+def create_container(
+    proxmox: ProxmoxAPI, container_settings: dict, ssh_pub_key: str
+) -> None:
     vmid = get_next_vm_id(proxmox)
 
     proxmox.nodes(PROXMOX_NODE).lxc.post(
@@ -101,8 +109,12 @@ def create_container(proxmox: ProxmoxAPI, container_settings: dict) -> None:
         storage="local-lvm",
         memory=container_settings["memory"],
         cores=container_settings["cores"],
-        net0="name=eth0,bridge=vmbr0,ip=dhcp",
+        net0="name=eth0,bridge=vmbr0,firewall=1,ip6=dhcp,ip=dhcp",
         rootfs=container_settings["rootfs"],
+        start=1,
+        features="nesting=1",
+        unprivileged=1,
+        ssh_public_keys=ssh_pub_key,
     )
 
     put_container_settings_in_file(container_settings["name"], vmid)
@@ -110,8 +122,9 @@ def create_container(proxmox: ProxmoxAPI, container_settings: dict) -> None:
 
 def main() -> None:
     proxmox = init_proxmox()
+    ssh_pub_key = get_ssh_pub_key(SSH_PUB_KEY_PATH)
     for container_settings in list_of_container_settings:
-        create_container(proxmox, container_settings)
+        create_container(proxmox, container_settings, ssh_pub_key)
 
 
 if __name__ == "__main__":
