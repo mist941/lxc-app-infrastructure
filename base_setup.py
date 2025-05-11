@@ -20,7 +20,8 @@ def enable_bash_for_lxc(ssh: paramiko.SSHClient) -> None:
         ssh.exec_command(f"echo 'lxc.init.cmd: /bin/bash' >> /etc/pve/lxc/{id}.conf")
         ssh.exec_command(f"pct restart {id}")
         print(f"Waiting for restart of {name} ({id})")
-        time.sleep(10)
+
+    time.sleep(10)
 
 
 def main() -> None:
