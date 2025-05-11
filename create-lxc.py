@@ -1,4 +1,5 @@
 import os
+import json
 from proxmoxer import ProxmoxAPI
 from dotenv import load_dotenv
 
@@ -61,7 +62,7 @@ list_of_container_settings = [
 ]
 
 
-def init_proxmox():
+def init_proxmox() -> ProxmoxAPI:
     proxmox = ProxmoxAPI(
         host=PROXMOX_HOST,
         user=PROXMOX_USER,
@@ -71,7 +72,17 @@ def init_proxmox():
     return proxmox
 
 
-def get_next_vm_id(proxmox):
+def put_container_settings_in_file(name: str, id: int) -> None:
+    with open("containers.json", "r", encoding="utf-8") as file:
+        data = json.load(file)
+
+    data[name] = id
+
+    with open("containers.json", "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4, ensure_ascii=False)
+
+
+def get_next_vm_id(proxmox: ProxmoxAPI) -> int:
     qemu_vms = proxmox.nodes(PROXMOX_NODE).qemu.get()
     lxc_cts = proxmox.nodes(PROXMOX_NODE).lxc.get()
     qemu_ids = [vm["vmid"] for vm in qemu_vms]
@@ -80,8 +91,9 @@ def get_next_vm_id(proxmox):
     return max(all_ids) + 1 if all_ids else 100
 
 
-def create_container(proxmox, container_settings):
+def create_container(proxmox: ProxmoxAPI, container_settings: dict) -> None:
     vmid = get_next_vm_id(proxmox)
+
     proxmox.nodes(PROXMOX_NODE).lxc.post(
         vmid=vmid,
         hostname=container_settings["name"],
@@ -93,8 +105,10 @@ def create_container(proxmox, container_settings):
         rootfs=container_settings["rootfs"],
     )
 
+    put_container_settings_in_file(container_settings["name"], vmid)
 
-def main():
+
+def main() -> None:
     proxmox = init_proxmox()
     for container_settings in list_of_container_settings:
         create_container(proxmox, container_settings)
