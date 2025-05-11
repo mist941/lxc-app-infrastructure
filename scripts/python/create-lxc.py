@@ -85,7 +85,7 @@ def create_container(proxmox, container_settings):
     proxmox.nodes(PROXMOX_NODE).lxc.post(
         vmid=vmid,
         hostname=container_settings["name"],
-        ostemplate="local:vztmpl/ubuntu-25.04-standard_25.04-1.1_amd64.tar.zst",
+        ostemplate="local:vztmpl/opensuse-15.6-default_20240910_amd64.tar.xz",
         storage="local-lvm",
         memory=container_settings["memory"],
         cores=container_settings["cores"],
