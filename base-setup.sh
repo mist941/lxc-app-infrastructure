@@ -22,6 +22,12 @@ sudo adduser admin
 
 sudo usermod -aG sudo admin
 
+sudo mkdir -p ~admin/.ssh
+
+sudo cp ~/.ssh/authorized_keys ~admin/.ssh/authorized_keys
+
+sudo chown -R admin:admin ~admin/.ssh
+
 sudo ufw allow OpenSSH
 
 sudo ufw enable
