@@ -59,6 +59,10 @@ sudo systemctl enable nginx
 
 sudo systemctl start nginx
 
+sudo apt install -y certbot python3-certbot-nginx
+
+sudo certbot --nginx -d app.example.com -d forgejo.example.com -d monitoring.example.com
+
 sudo ufw allow 'Nginx Full'
 
 sudo ufw enable
