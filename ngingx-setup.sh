@@ -55,6 +55,8 @@ sudo ln -s /etc/nginx/sites-available/app-proxy /etc/nginx/sites-enabled/
 sudo ln -s /etc/nginx/sites-available/forgejo-proxy /etc/nginx/sites-enabled/
 sudo ln -s /etc/nginx/sites-available/monitoring-proxy /etc/nginx/sites-enabled/
 
+sudo nginx -t
+
 sudo systemctl enable nginx
 
 sudo systemctl start nginx
