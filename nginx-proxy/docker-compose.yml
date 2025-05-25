@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  nginx-proxy:
+    build: .
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d
+      - ./ssl/:/etc/nginx/ssl
+    restart: unless-stopped
+
+networks:
+  proxy-network:
+    driver: bridge
