@@ -15,7 +15,7 @@ services:
       - SERVERPORT=51820
       - PEERS=2
       - PEERDNS=auto
-      - INTERNAL_SUBNET=10.13.13.0
+      - INTERNAL_SUBNET=192.168.100.0
     volumes:
       - ./config:/config
       - /lib/modules:/lib/modules
