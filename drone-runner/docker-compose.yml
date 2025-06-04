@@ -1,0 +1,11 @@
+services:
+  drone-runner:
+    image: drone/drone-runner-docker:1
+    container_name: drone-runner
+    environment:
+      - DRONE_RPC_HOST=drone-server
+      - DRONE_RPC_PROTO=http
+      - DRONE_RPC_SECRET=super-secret
+      - DRONE_RUNNER_CAPACITY=2
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
