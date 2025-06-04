@@ -14,3 +14,4 @@ services:
       - DRONE_USER_CREATE=username:your_admin_user,admin:true
     volumes:
       - ./drone:/data
+    restart: unless-stopped
