@@ -1,0 +1,75 @@
+version: "3.8"
+
+services:
+  restic:
+    image: restic/restic:latest
+    container_name: restic-backup
+    environment:
+      - RESTIC_REPOSITORY=/backup-repo
+      - RESTIC_PASSWORD=your-strong-password-here
+      - BACKUP_CRON=0 2 * * *
+      - KEEP_DAILY=7
+      - KEEP_WEEKLY=4
+      - KEEP_MONTHLY=12
+      - KEEP_YEARLY=2
+
+    volumes:
+      - restic-repo:/backup-repo
+
+      - /var/lib/docker/volumes:/data/docker-volumes:ro
+      - ../postgresql:/data/postgresql:ro
+      - ../forgejo:/data/forgejo:ro
+      - ../monitoring:/data/monitoring:ro
+      - ../drone-server:/data/drone-server:ro
+      - ../nginx-proxy:/data/nginx-proxy:ro
+
+      - ./scripts:/scripts:ro
+      - ./exclude.txt:/exclude.txt:ro
+
+    command: |
+      sh -c '
+        restic snapshots || restic init
+        
+        restic backup /data \
+          --exclude-file=/exclude.txt \
+          --tag automated \
+          --host $$(hostname)
+        
+        restic forget \
+          --keep-daily $$KEEP_DAILY \
+          --keep-weekly $$KEEP_WEEKLY \
+          --keep-monthly $$KEEP_MONTHLY \
+          --keep-yearly $$KEEP_YEARLY \
+          --prune
+          
+        restic check --read-data-subset=5%
+      '
+
+    restart: "no"
+
+  restic-browser:
+    image: instrumentisto/restic-browser:latest
+    container_name: restic-browser
+    environment:
+      - RESTIC_REPOSITORY=/backup-repo
+      - RESTIC_PASSWORD=your-strong-password-here
+    volumes:
+      - restic-repo:/backup-repo:ro
+    ports:
+      - "8000:8000"
+    depends_on:
+      - restic
+    profiles:
+      - web-ui
+
+volumes:
+  restic-repo:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/backups/restic
+
+networks:
+  default:
+    name: backup-network
