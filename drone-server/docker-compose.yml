@@ -12,6 +12,8 @@ services:
       - DRONE_SERVER_HOST=drone:80
       - DRONE_SERVER_PROTO=http
       - DRONE_USER_CREATE=username:your_admin_user,admin:true
+      - DRONE_DATABASE_DRIVER=postgres
+      - DRONE_DATABASE_DATASOURCE=postgres://drone:dronepass@drone-postgres:5432/drone?sslmode=disable
     volumes:
       - ./drone:/data
     restart: unless-stopped
