@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  restic-backup:
+    image: restic/restic:latest
+    container_name: restic-backup
+    environment:
+      # Обов'язково заміни ці змінні на свої
+      - RESTIC_REPOSITORY=s3:s3.amazonaws.com/your-bucket-name/backup
+      - AWS_ACCESS_KEY_ID=your-access-key
+      - AWS_SECRET_ACCESS_KEY=your-secret-key
+      - RESTIC_PASSWORD=your-strong-password
+      - TZ=Europe/Kyiv
+    volumes:
+      - /your/local/data:/data:ro
+      - /your/local/restic-cache:/root/.cache/restic
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      restic init || true &&
+      restic backup /data &&
+      restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune
+      "
