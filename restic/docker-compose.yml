@@ -5,10 +5,10 @@ services:
     image: restic/restic:latest
     container_name: restic-backup
     environment:
-      - RESTIC_REPOSITORY=s3:s3.amazonaws.com/your-bucket-name/backup
+      - RESTIC_REPOSITORY=s3:s3.amazonaws.com/backup-restic
       - AWS_ACCESS_KEY_ID=AKIA2222222222222222
-      - AWS_SECRET_ACCESS_KEY=your-secret-key
-      - RESTIC_PASSWORD=your-strong-password
+      - AWS_SECRET_ACCESS_KEY=1234567890
+      - RESTIC_PASSWORD=1234567890
       - TZ=Europe/Kyiv
     volumes:
       - /your/local/data:/data:ro
