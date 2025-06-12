@@ -5,9 +5,8 @@ services:
     image: restic/restic:latest
     container_name: restic-backup
     environment:
-      # Обов'язково заміни ці змінні на свої
       - RESTIC_REPOSITORY=s3:s3.amazonaws.com/your-bucket-name/backup
-      - AWS_ACCESS_KEY_ID=your-access-key
+      - AWS_ACCESS_KEY_ID=AKIA2222222222222222
       - AWS_SECRET_ACCESS_KEY=your-secret-key
       - RESTIC_PASSWORD=your-strong-password
       - TZ=Europe/Kyiv
